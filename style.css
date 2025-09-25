@@ -1,0 +1,68 @@
+body {
+  font-family: Arial, sans-serif;
+  background: #222;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+
+h1 {
+  margin-bottom: 20px;
+}
+
+.afinacion-container {
+  margin-bottom: 20px;
+  padding: 10px;
+  background: #333;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.afinacion-container select {
+  margin: 5px;
+  padding: 5px;
+  border-radius: 5px;
+}
+
+button {
+  margin-top: 10px;
+  padding: 8px 15px;
+  border: none;
+  border-radius: 8px;
+  background: #ff6600;
+  color: #fff;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #ff8800;
+}
+
+.guitarra {
+  display: grid;
+  grid-template-columns: repeat(13, 60px);
+  grid-template-rows: repeat(6, 60px);
+  gap: 2px;
+  background: #4a2c2a;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+.traste {
+  background: #333;
+  border: 1px solid #555;
+  border-radius: 5px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 12px;
+  color: #ddd;
+  transition: background 0.2s;
+}
+
+.traste:hover {
+  background: #666;
+}
