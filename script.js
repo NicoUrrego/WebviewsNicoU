@@ -76,21 +76,47 @@ function generarGuitarra() {
   });
 }
 
-// Tocar nota usando Web Audio API
+// 🎸 Tocar nota con efecto de guitarra eléctrica
 function tocarNota(nota) {
   const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+  // Oscilador principal (sawtooth para cuerpo metálico)
   const osc = audioCtx.createOscillator();
-  const gainNode = audioCtx.createGain();
-
-  osc.type = "sine";
+  osc.type = "sawtooth";
   osc.frequency.setValueAtTime(notaAFrecuencia(nota), audioCtx.currentTime);
-  gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime);
 
-  osc.connect(gainNode);
+  // Ganancia (envolvente ADSR simple)
+  const gainNode = audioCtx.createGain();
+  gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+  gainNode.gain.linearRampToValueAtTime(0.4, audioCtx.currentTime + 0.05); // Attack
+  gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 1.5); // Decay/Sustain
+
+  // Distorsión
+  const distortion = audioCtx.createWaveShaper();
+  distortion.curve = makeDistortionCurve(400);
+  distortion.oversample = "4x";
+
+  // Conexión
+  osc.connect(distortion);
+  distortion.connect(gainNode);
   gainNode.connect(audioCtx.destination);
 
   osc.start();
-  osc.stop(audioCtx.currentTime + 1);
+  osc.stop(audioCtx.currentTime + 2);
+}
+
+// Distorsión para sonido eléctrico
+function makeDistortionCurve(amount) {
+  let n_samples = 44100,
+    curve = new Float32Array(n_samples),
+    deg = Math.PI / 180,
+    i = 0,
+    x;
+  for (; i < n_samples; ++i) {
+    x = (i * 2) / n_samples - 1;
+    curve[i] = ((3 + amount) * x * 20 * deg) / (Math.PI + amount * Math.abs(x));
+  }
+  return curve;
 }
 
 // Convertir nota (ej: A4) a frecuencia
@@ -122,3 +148,4 @@ aplicarBtn.addEventListener("click", () => {
 // Inicialización
 generarSelectores();
 generarGuitarra();
+

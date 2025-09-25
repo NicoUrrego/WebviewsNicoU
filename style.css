@@ -1,6 +1,6 @@
 body {
   font-family: Arial, sans-serif;
-  background: #222;
+  background: #111;
   color: #fff;
   display: flex;
   flex-direction: column;
@@ -10,14 +10,17 @@ body {
 
 h1 {
   margin-bottom: 20px;
+  color: #ff6600;
+  text-shadow: 0 0 10px #ff6600aa;
 }
 
 .afinacion-container {
   margin-bottom: 20px;
   padding: 10px;
-  background: #333;
+  background: #222;
   border-radius: 10px;
   text-align: center;
+  box-shadow: 0 0 10px #000;
 }
 
 .afinacion-container select {
@@ -43,22 +46,24 @@ button:hover {
 .guitarra {
   display: grid;
   grid-template-columns: repeat(13, 60px);
-  grid-template-rows: repeat(6, 60px);
+  grid-template-rows: repeat(6, 40px);
   gap: 2px;
-  background: #4a2c2a;
-  padding: 10px;
+  background: linear-gradient(90deg, #3b2b1f, #2d1d12);
   border-radius: 10px;
+  padding: 10px;
+  box-shadow: inset 0 0 20px #000;
+  position: relative;
 }
 
+/* Trastes */
 .traste {
-  background: #333;
-  border: 1px solid #555;
-  border-radius: 5px;
+  background: rgba(50, 50, 50, 0.7);
+  border-right: 3px solid #aaa;
   cursor: pointer;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 12px;
+  font-size: 11px;
   color: #ddd;
   transition: background 0.2s;
 }
@@ -66,3 +71,33 @@ button:hover {
 .traste:hover {
   background: #666;
 }
+
+/* Cuerdas */
+.guitarra .traste:nth-child(13n+1) { border-left: 3px solid #aaa; }
+
+/* Grosor de cuerdas (6 → más gruesa, 1 → más delgada) */
+.guitarra .traste:nth-child(n) {
+  border-top: 2px solid #ccc;
+}
+.guitarra .traste:nth-child(-n+13) { border-top-width: 4px; } /* 6ª cuerda */
+.guitarra .traste:nth-child(n+65):nth-child(-n+78) { border-top-width: 1px; } /* 1ª cuerda */
+
+/* Inlays (marcas de posición) */
+.guitarra::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: calc(60px * 3 + 30px);
+  width: 10px;
+  height: 10px;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow:
+    calc(60px * 2) 0 #fff,
+    calc(60px * 4) 0 #fff,
+    calc(60px * 6) 0 #fff,
+    calc(60px * 8) 0 #fff,
+    calc(60px * 12) -15px #fff,
+    calc(60px * 12) 15px #fff;
+}
+
