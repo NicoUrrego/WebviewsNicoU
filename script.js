@@ -18,6 +18,9 @@ const guitarra = document.getElementById("guitarra");
 const controlesAfinacion = document.getElementById("controles-afinacion");
 const aplicarBtn = document.getElementById("aplicar-afinacion");
 
+// 🎵 Un solo contexto global
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
 // Generar selectores de afinación
 function generarSelectores() {
   controlesAfinacion.innerHTML = "";
@@ -78,18 +81,16 @@ function generarGuitarra() {
 
 // 🎸 Tocar nota con efecto de guitarra eléctrica
 function tocarNota(nota) {
-  const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-
-  // Oscilador principal (sawtooth para cuerpo metálico)
+  // Oscilador principal
   const osc = audioCtx.createOscillator();
   osc.type = "sawtooth";
   osc.frequency.setValueAtTime(notaAFrecuencia(nota), audioCtx.currentTime);
 
-  // Ganancia (envolvente ADSR simple)
+  // Ganancia con ADSR
   const gainNode = audioCtx.createGain();
   gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
   gainNode.gain.linearRampToValueAtTime(0.4, audioCtx.currentTime + 0.05); // Attack
-  gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 1.5); // Decay/Sustain
+  gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 1.5); // Decay
 
   // Distorsión
   const distortion = audioCtx.createWaveShaper();
@@ -101,11 +102,19 @@ function tocarNota(nota) {
   distortion.connect(gainNode);
   gainNode.connect(audioCtx.destination);
 
+  // Reproducir y parar
   osc.start();
   osc.stop(audioCtx.currentTime + 2);
+
+  // Liberar memoria al parar
+  osc.onended = () => {
+    osc.disconnect();
+    gainNode.disconnect();
+    distortion.disconnect();
+  };
 }
 
-// Distorsión para sonido eléctrico
+// Distorsión
 function makeDistortionCurve(amount) {
   let n_samples = 44100,
     curve = new Float32Array(n_samples),
